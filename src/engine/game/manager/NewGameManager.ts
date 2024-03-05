@@ -1,10 +1,10 @@
-import { PartialResourceSet } from "../resources/Cost";
-import { Farm, Woods } from "./Building";
+import { PartialResourceSet } from "../../resources/Cost";
+import { Farm, Woods } from "../Building";
 import { BuildingManager } from "./BuildingManager";
 import { DecksManager } from "./DecksManager";
 import { ResourceManager } from "./ResourceManager";
-import { BaseSingleton } from "./Singleton";
-import { Card } from "./card/Card";
+import { BaseSingleton } from "../Singleton";
+import { Card } from "../card/Card";
 
 export class NewGameManager extends BaseSingleton {
     public startGame(): void {
@@ -22,7 +22,7 @@ export class NewGameManager extends BaseSingleton {
         ]
 
         startingCardDefs.forEach(cardDef => {
-            decksManager.deck.addCardToBottom(new Card(cardDef));
+            decksManager.deck.addCardToEnd(new Card(cardDef));
         });
 
         startingBuildings.forEach(building => {

@@ -9,6 +9,9 @@ export class Deck {
     drawCard() {
         return this.cards.pop();
     }
+    drawAll() {
+        return this.cards.splice(0, this.cards.length);
+    }
     shuffle() {
         for (let i = this.cards.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -29,11 +32,17 @@ export class Deck {
     removeCard(index) {
         return this.cards.splice(index, 1)[0];
     }
-    addCardToTop(card) {
+    addCardToStart(card) {
         this.cards.unshift(card);
     }
-    addCardToBottom(card) {
+    addCardsToStart(cards) {
+        this.cards.unshift(...cards);
+    }
+    addCardToEnd(card) {
         this.cards.push(card);
+    }
+    addCardsToEnd(cards) {
+        this.cards.push(...cards);
     }
     getCardIndex(card) {
         return this.cards.indexOf(card);
@@ -55,11 +64,11 @@ export class Deck {
     }
     moveCardToTop(index) {
         const card = this.removeCardByIndex(index);
-        this.addCardToTop(card);
+        this.addCardToStart(card);
     }
     moveCardToBottom(index) {
         const card = this.removeCardByIndex(index);
-        this.addCardToBottom(card);
+        this.addCardToEnd(card);
     }
     moveCardToIndex(fromIndex, toIndex) {
         const card = this.removeCardByIndex(fromIndex);

@@ -1,5 +1,5 @@
-import { Event } from "../util/Event";
-import { BaseSingleton } from "./Singleton";
+import { Event } from "../../util/Event";
+import { BaseSingleton } from "../Singleton";
 
 export enum Season {
     Spring,

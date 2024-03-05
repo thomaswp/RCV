@@ -1,5 +1,5 @@
-import { ProductionBuilding } from "./Building";
-import { BaseSingleton } from "./Singleton";
+import { ProductionBuilding } from "../Building";
+import { BaseSingleton } from "../Singleton";
 
 export class BuildingManager extends BaseSingleton {
 

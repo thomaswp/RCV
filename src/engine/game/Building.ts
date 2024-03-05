@@ -2,7 +2,7 @@ import { CardDef } from "../card-defs/CardDef";
 import { PartialResourceSet } from "../resources/Cost";
 import { Resource } from "../resources/Resources";
 import { BaseGameObject } from "./GameObject";
-import { Season, SeasonManager } from "./Season";
+import { Season, SeasonManager } from "./manager/SeasonManager";
 
 
 export abstract class ProductionBuilding extends BaseGameObject {
