@@ -1,5 +1,7 @@
+import { Event } from "../../util/Event";
 import { GameSettings } from "../GameSettings";
 import { BaseSingleton } from "../Singleton";
+import { Card } from "../card/Card";
 import { Deck } from "../card/Deck";
 import { SeasonManager } from "./SeasonManager";
 import { TurnManager } from "./TurnManager";
@@ -8,6 +10,8 @@ export class DecksManager extends BaseSingleton {
     readonly deck: Deck = new Deck();
     readonly hand: Deck = new Deck();
     readonly discard: Deck = new Deck();
+
+    readonly CardDrawn = new Event<Card>();
 
     drawCardsForTurnStart() {
         // TODO: Config
@@ -24,9 +28,8 @@ export class DecksManager extends BaseSingleton {
             return false;
         }
         const card = this.deck.drawCard();
-        if (card) {
-            this.hand.addCardToEnd(card);
-        }
+        this.hand.addCardToEnd(card);
+        this.CardDrawn.emit(card);
         return true;
     }
 

@@ -5,7 +5,7 @@
 export class Event<T> {
     private handlers: Array<(args: T) => void> = [];
 
-    public register(handler: (args: T) => void) {
+    public on(handler: (args: T) => void) {
         this.handlers.push(handler);
     }
 

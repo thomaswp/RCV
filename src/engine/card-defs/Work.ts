@@ -2,6 +2,8 @@
 // import { Food, Wood, Worker } from "../resources/Resources";
 // import { CardDef } from "./CardDef";
 
+import { CardDef } from "./CardDef";
+
 // export const Work: CardDef = {
 //     name: 'Work',
 //     components: [
@@ -15,3 +17,5 @@
 //         )
 //     ]
 // }
+
+/// <reference path="./CardDef.ts" />

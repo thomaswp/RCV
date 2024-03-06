@@ -4,6 +4,7 @@ import { DecksManager } from "./manager/DecksManager";
 import { NewGameManager } from "./manager/NewGameManager";
 import { ResourceManager } from "./manager/ResourceManager";
 import { SeasonManager } from "./manager/SeasonManager";
+import { TurnManager } from "./manager/TurnManager";
 import { Singleton } from "./Singleton";
 
 // TODO: Is there a way for this to work with interfaces / abstract classes?
@@ -20,6 +21,17 @@ export class Game {
         new ResourceManager(this);
         new SeasonManager(this);
         new GameSettings(this);
+        new TurnManager(this);
+        new BuildingManager(this);
+
+        this.singletons.forEach(singleton => {
+            singleton.initialize();
+        });
+    }
+
+    start() {
+        this.getSingleton(NewGameManager).startGame();
+        this.getSingleton(TurnManager).startTurn();
     }
 
     getSingleton<T extends Singleton>(type: new (...args: any[]) => T): T {

@@ -79,7 +79,7 @@ export class Woods extends ProductionBuilding {
     private woodCount: number = 0;
 
     initialize() {
-        this.getSingleton(SeasonManager).OnSeasonChange.register(season => {
+        this.getSingleton(SeasonManager).OnSeasonChange.on(season => {
             this.woodCount += this.expansionLevel;
         });
     }

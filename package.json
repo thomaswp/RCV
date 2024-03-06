@@ -13,5 +13,8 @@
     "typescript": "^5.3.3",
     "weback": "^0.0.1-security",
     "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "pixi.js": "^8.0.0"
   }
 }

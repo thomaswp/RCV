@@ -5,6 +5,7 @@ import { DecksManager } from "./DecksManager";
 import { ResourceManager } from "./ResourceManager";
 import { BaseSingleton } from "../Singleton";
 import { Card } from "../card/Card";
+import { Cards } from "../../card-defs/CardDef";
 
 export class NewGameManager extends BaseSingleton {
     public startGame(): void {
@@ -13,7 +14,16 @@ export class NewGameManager extends BaseSingleton {
         const resourceManager = this.getSingleton(ResourceManager);
 
         const startingCardDefs = [
-
+            Cards.Buildings.House,
+            Cards.Buildings.Farm,
+            Cards.Buildings.Woods,
+            Cards.Buildings.Quarry,
+            Cards.Actions.Work,
+            Cards.Actions.Work,
+            Cards.Actions.Work,
+            Cards.Actions.Work,
+            Cards.Actions.UpgradeStorage,
+            Cards.Actions.UpgradeStorage,
         ]
 
         const startingBuildings = [

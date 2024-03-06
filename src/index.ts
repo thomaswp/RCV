@@ -1,1 +1,3 @@
-console.log('Hello, world!');
+import { initUI } from "./ui/App";
+
+initUI();
