@@ -1,3 +1,3 @@
-import { initUI } from "./ui/App";
+import { initUI } from "./render/App";
 
 initUI();

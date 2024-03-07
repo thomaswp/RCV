@@ -1,4 +1,4 @@
-import { Application, Container, Graphics, Sprite, buildAdaptiveBezier } from "pixi.js";
+import { Application, Container, Graphics, Sprite, Text, buildAdaptiveBezier } from "pixi.js";
 import { Game } from "../engine/game/Game";
 import { BuildingManager } from "../engine/game/manager/BuildingManager";
 import { ProductionBuilding } from "../engine/game/Building";
@@ -7,7 +7,7 @@ import { Card } from "../engine/game/card/Card";
 
 export class Hand {
 
-    private cards: Graphics[] = [];
+    private cards: Container[] = [];
     readonly container: Container;
 
     constructor(
@@ -43,12 +43,30 @@ export class Hand {
         }
     }
 
-    createCardSprite(card: Card): Graphics {
-        let g = new Graphics();
-        g.roundRect(0, 0, 150, 200, 10);
-        g.fill(0xcccccc);
-        g.stroke(0x000000);
-        return g;
+    createCardSprite(card: Card): Container {
+
+        let container = new Container();
+
+        let update = () => {
+            container.removeChildren();
+            let g = new Graphics();
+            g.roundRect(0, 0, 150, 200, 10);
+            g.fill(0xcccccc);
+            g.stroke(0x000000);
+            container.addChild(g);
+    
+            let text = new Text(card.name, { 
+                fontSize: 18, 
+                wordWrap: true,
+                wordWrapWidth: 150 - 10 * 2
+            });
+            text.x = 10;
+            text.y = 10;
+            container.addChild(text);
+        }
+        update();
+
+        return container;
 
     }
 }

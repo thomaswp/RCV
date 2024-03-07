@@ -12,7 +12,7 @@ export class NewGameManager extends BaseSingleton {
         const decksManager = this.getSingleton(DecksManager);
         const buildingsManager = this.getSingleton(BuildingManager);
         const resourceManager = this.getSingleton(ResourceManager);
-
+ 
         const startingCardDefs = [
             Cards.Buildings.House,
             Cards.Buildings.Farm,
@@ -27,21 +27,24 @@ export class NewGameManager extends BaseSingleton {
         ]
 
         const startingBuildings = [
-            new Farm(this.game),
-            new Woods(this.game),
+            new Farm(this.game, Cards.Buildings.Farm),
+            new Woods(this.game, Cards.Buildings.Woods),
         ]
 
         startingCardDefs.forEach(cardDef => {
             decksManager.deck.addCardToEnd(new Card(cardDef));
         });
+        decksManager.deck.shuffle();
 
         startingBuildings.forEach(building => {
             buildingsManager.addBuilding(building);
-            building.initialize();
+            console.log(building.resource);
             let starting = {
                 [building.resource]: building.getTotalStorageSpace()
             } as PartialResourceSet;
             resourceManager.resources.add(starting);
+            console.log("adding", starting, ':', resourceManager.resources);
+            building.initialize();
         });
 
 

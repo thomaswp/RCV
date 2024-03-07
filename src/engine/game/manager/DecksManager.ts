@@ -14,7 +14,6 @@ export class DecksManager extends BaseSingleton {
     readonly CardDrawn = new Event<Card>();
 
     drawCardsForTurnStart() {
-        // TODO: Config
         this.drawCards(this.getSingleton(GameSettings).cardsDrawnPerTurn);
     }
 

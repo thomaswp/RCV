@@ -1,11 +1,11 @@
-import { Application, Container, Graphics, Sprite, buildAdaptiveBezier } from "pixi.js";
+import { Application, Container, Graphics, Sprite, Text, buildAdaptiveBezier } from "pixi.js";
 import { Game } from "../engine/game/Game";
 import { BuildingManager } from "../engine/game/manager/BuildingManager";
 import { ProductionBuilding } from "../engine/game/Building";
 
 export class Buildings {
 
-    private buildings: Graphics[] = [];
+    private buildings: Container[] = [];
     readonly container: Container;
 
     constructor(
@@ -42,12 +42,30 @@ export class Buildings {
         }
     }
 
-    createBuildingSprite(building: ProductionBuilding): Graphics {
+    createBuildingSprite(building: ProductionBuilding): Container {
+        let container = new Container();
+        container.removeChildren();
         let g = new Graphics();
         g.roundRect(0, 0, 150, 200, 10);
         g.fill(0xcccccc);
         g.stroke(0x000000);
-        return g;
+        container.addChild(g);
+
+        let text = new Text(building.describe(), { 
+            fontSize: 18, 
+            wordWrap: true,
+            wordWrapWidth: 150 - 10 * 2
+        });
+        text.x = 10;
+        text.y = 10;
+        container.addChild(text);
+
+        let update = () => {
+            text.text = building.describe();
+        }
+        building.Updated.on(update);
+
+        return container;
 
     }
 }

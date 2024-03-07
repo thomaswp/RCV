@@ -1,7 +1,11 @@
 import { CardDef } from "../card-defs/CardDef";
 import { PartialResourceSet } from "../resources/Cost";
 import { Resource } from "../resources/Resources";
+import { Event } from "../util/Event";
+import { Game } from "./Game";
 import { BaseGameObject } from "./GameObject";
+import { GameSettings } from "./GameSettings";
+import { ResourceManager } from "./manager/ResourceManager";
 import { Season, SeasonManager } from "./manager/SeasonManager";
 
 
@@ -12,7 +16,23 @@ export abstract class ProductionBuilding extends BaseGameObject {
     protected expansionLevel: number = 1;
     protected storageLevel: number = 1;
 
-    protected resourceStored: number = 0;
+    // protected resourceStored: number = 0;
+
+    public readonly cardDef: CardDef;
+
+    public readonly Updated = new Event<void>();
+
+    get name() {
+        return this.cardDef.name;
+    }
+
+    constructor(
+        game: Game,
+        cardDef: CardDef
+    ) {
+        super(game);
+        this.cardDef = cardDef;
+    }
     
     initialize(): void {
 
@@ -39,6 +59,16 @@ export abstract class ProductionBuilding extends BaseGameObject {
         this.expansionLevel++;
     }
 
+    private get resourceStored() {
+        return this.game.getSingleton(ResourceManager).resources.get(this.resource);
+    }
+
+    describe(): string {
+        return `${this.name}
+Level: ${this.expansionLevel}
+Available: ${this.getResourceAvailable()}
+Storage ${this.resourceStored} / ${this.getTotalStorageSpace()}`;
+    }
 }
 
 export const SeasonFoodMultiplier = {
@@ -50,7 +80,7 @@ export const SeasonFoodMultiplier = {
 
 export class Farm extends ProductionBuilding {
 
-    resource: Resource.Food;
+    resource = Resource.Food;
 
     private get season() {
         return this.getSingleton(SeasonManager).season;
@@ -68,20 +98,30 @@ export class Farm extends ProductionBuilding {
     }
 
     getTotalStorageSpace(): number {
-        return this.storageLevel;
+        return this.storageLevel * 
+            this.settings.farm.storageMultiplier;
     }
 }
 
 export class Woods extends ProductionBuilding {
 
-    resource: Resource.Wood;
+    resource = Resource.Wood;
 
     private woodCount: number = 0;
 
+    getMaxAvailable(): number {
+        return this.expansionLevel * this.settings.woods.maxCountPerExpansion;
+    }
+
     initialize() {
-        this.getSingleton(SeasonManager).OnSeasonChange.on(season => {
+        this.getSingleton(SeasonManager).OnSeasonChange.on(_ => {
             this.woodCount += this.expansionLevel;
+            this.woodCount = Math.min(this.woodCount, this.getMaxAvailable());
         });
+
+        this.woodCount = this.getMaxAvailable();
+
+        this.Updated.emit();
     }
 
     getResourceAvailable(): number {
