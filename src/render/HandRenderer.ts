@@ -65,6 +65,14 @@ export class CardRenderer extends BoundContainer<Card> {
         text.x = 10;
         text.y = 10;
         this.addChild(text);
+
+        this.interactive = true;
+        this.onclick = () => {
+            let targets = this.data.def.getPossibleTargets(this.game);
+            for (let target of targets) {
+                console.log(target, this.data.def.getCost(this.game, target));
+            }
+        }
     }
 
     refreshBinding(card: Card): void {

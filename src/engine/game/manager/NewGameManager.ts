@@ -1,12 +1,12 @@
 import { PartialResourceSet } from "../../resources/ResourceSet";
-import { Farm, Woods } from "../Building";
+import { Farm, House, Quarry, Woods } from "../Building";
 import { BuildingManager } from "./BuildingManager";
 import { DecksManager } from "./DecksManager";
 import { ResourceManager } from "./ResourceManager";
 import { BaseSingleton } from "../Singleton";
 import { Card } from "../card/Card";
-import { Cards } from "../../card-defs/CardDef";
 import { Resource } from "../../resources/Resources";
+import { Expand, Work } from "../../components/CardAction";
 
 export class NewGameManager extends BaseSingleton {
     public startGame(): void {
@@ -15,21 +15,19 @@ export class NewGameManager extends BaseSingleton {
         const resourceManager = this.getSingleton(ResourceManager);
  
         const startingCardDefs = [
-            Cards.Buildings.House,
-            Cards.Buildings.Farm,
-            Cards.Buildings.Woods,
-            Cards.Buildings.Quarry,
-            Cards.Actions.Work,
-            Cards.Actions.Work,
-            Cards.Actions.Work,
-            Cards.Actions.Work,
-            Cards.Actions.UpgradeStorage,
-            Cards.Actions.UpgradeStorage,
+            new Work(),
+            new Work(),
+            new Work(),
+            new Work(),
+            new Expand(),
+            new Expand(),
         ]
 
         const startingBuildings = [
-            new Farm(this.game, Cards.Buildings.Farm),
-            new Woods(this.game, Cards.Buildings.Woods),
+            new House(this.game),
+            new Farm(this.game),
+            new Woods(this.game),
+            new Quarry(this.game),
         ]
 
         startingCardDefs.forEach(cardDef => {

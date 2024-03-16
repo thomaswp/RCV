@@ -32,6 +32,10 @@ export class ResourceSet {
         return this.map.get(key) || 0;
     }
 
+    set(key: Resource, value: number) {
+        this.map.set(key, value);
+    }
+
     setResources() {
         return this.map.keys();
     }

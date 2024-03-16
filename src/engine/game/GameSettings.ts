@@ -10,4 +10,9 @@ export class GameSettings extends BaseSingleton {
     woods = {
         maxCountPerExpansion: 3
     }
+
+    quary = {
+        startingStone: 3,
+        maxCountPerExpansion: 2
+    }
 }

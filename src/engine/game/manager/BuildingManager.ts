@@ -4,7 +4,7 @@ import { BaseSingleton } from "../Singleton";
 
 export class BuildingManager extends BaseSingleton {
 
-    private buildings: ProductionBuilding[] = [];
+    readonly buildings: ProductionBuilding[] = [];
 
     public readonly BuildingAdded = new Event<ProductionBuilding>();
     public readonly BuildingRemoved = new Event<ProductionBuilding>();
@@ -12,5 +12,16 @@ export class BuildingManager extends BaseSingleton {
     public addBuilding(building: ProductionBuilding) {
         this.buildings.push(building);
         this.BuildingAdded.emit(building);
+    }
+
+    public build(building: ConstructorOf<ProductionBuilding>) {
+        let existing = this.buildings.find(b => b instanceof building);
+        if (existing) {
+            existing.expand();
+        } else {
+            let newBuilding = new building(this.game);
+            this.addBuilding(newBuilding);
+            newBuilding.initialize();
+        }
     }
 }

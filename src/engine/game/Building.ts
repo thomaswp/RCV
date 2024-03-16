@@ -1,4 +1,3 @@
-import { CardDef } from "../card-defs/CardDef";
 import { PartialResourceSet } from "../resources/ResourceSet";
 import { Resource } from "../resources/Resources";
 import { Event } from "../util/Event";
@@ -7,30 +6,18 @@ import { BaseGameObject } from "./GameObject";
 import { GameSettings } from "./GameSettings";
 import { ResourceManager } from "./manager/ResourceManager";
 import { Season, SeasonManager } from "./manager/SeasonManager";
+import { TurnManager } from "./manager/TurnManager";
 
 
 export abstract class ProductionBuilding extends BaseGameObject {
     
     readonly resource: Resource;
+    readonly name: string;
 
     protected expansionLevel: number = 1;
     protected storageLevel: number = 1;
 
-    // protected resourceStored: number = 0;
-
-    public readonly cardDef: CardDef;
-
-    get name() {
-        return this.cardDef.name;
-    }
-
-    constructor(
-        game: Game,
-        cardDef: CardDef
-    ) {
-        super(game);
-        this.cardDef = cardDef;
-    }
+    get level() { return this.expansionLevel; }
     
     initialize(): void {
 
@@ -43,6 +30,13 @@ export abstract class ProductionBuilding extends BaseGameObject {
     getWorkCost() {
         return {
             [Resource.Worker]: 1
+        }
+    }
+
+    getExpansionCost() {
+        return {
+            [Resource.Wood]: 1 * this.expansionLevel,
+            [Resource.Stone]: 1 * this.expansionLevel,
         }
     }
 
@@ -76,9 +70,35 @@ export const SeasonFoodMultiplier = {
     [Season.Winter]: 0
 }
 
+export class House extends ProductionBuilding {
+
+    resource = Resource.Worker;
+    name = "House";
+
+    initialize(): void {
+        const resourceManager = this.getSingleton(ResourceManager);
+        this.getSingleton(TurnManager).TurnStarted.on(_ => {
+            resourceManager.resources.set(Resource.Worker, this.expansionLevel);
+        });
+    }
+
+    getResourceAvailable(): number {
+        return 0;
+    }
+
+    canWork(): boolean {
+        return false;
+    }
+
+    work(): PartialResourceSet {
+        throw new Error("Cannot work House.");
+    }
+}
+
 export class Farm extends ProductionBuilding {
 
     resource = Resource.Food;
+    name = "Farm";
 
     private get season() {
         return this.getSingleton(SeasonManager).season;
@@ -104,6 +124,7 @@ export class Farm extends ProductionBuilding {
 export class Woods extends ProductionBuilding {
 
     resource = Resource.Wood;
+    name = "Woods";
 
     private woodCount: number = 0;
 
@@ -126,6 +147,48 @@ export class Woods extends ProductionBuilding {
 
     work(): PartialResourceSet {
         this.woodCount--;
+        return {
+            [Resource.Wood]: 1
+        }
+    }
+}
+
+export class Quarry extends ProductionBuilding {
+
+    resource = Resource.Stone;
+    name = "Quarry";
+
+    private stoneCount: number = 0;
+
+    getMaxAvailable(): number {
+        return this.settings.quary.startingStone + 
+            this.expansionLevel * this.settings.quary.maxCountPerExpansion;
+    }
+
+    initialize() {
+        this.stoneCount = this.getMaxAvailable();
+    }
+
+    getResourceAvailable(): number {
+        return this.stoneCount;
+    }
+
+    getWorkCost() {
+        if (this.stoneCount == 0) {
+            return {
+                [Resource.Worker]: 1,
+                [Resource.Wood]: 2
+            }
+        }
+        return super.getWorkCost();
+    }
+
+    work(): PartialResourceSet {
+        if (this.stoneCount == 0) {
+            this.stoneCount = this.getMaxAvailable();
+            return {};
+        }
+        this.stoneCount--;
         return {
             [Resource.Wood]: 1
         }
