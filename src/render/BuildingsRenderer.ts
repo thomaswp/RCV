@@ -66,6 +66,14 @@ export class BuildingRenderer extends BoundContainer<ProductionBuilding> {
 
     refreshBinding(card: ProductionBuilding): void {
         this.text.text = card.describe();
+        let tint = 0xffffff;
+        if (this.context.targetting != null) {
+            console.log(this.context.targetting);
+            if (!this.context.targetting.possibleTargets.includes(this.data)) {
+                tint = 0x777777;
+            }
+        }
+        this.back.tint = tint;
     }
     
 }

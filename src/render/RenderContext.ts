@@ -1,10 +1,17 @@
 import { Application } from "pixi.js";
 import { Game } from "../engine/game/Game";
 import { BoundContainer } from "./BoundContainer";
+import { Card } from "../engine/game/card/Card";
+
+type Targetting = {
+    card: Card;
+    possibleTargets: any[];
+}
 
 export class RenderContext {
 
     readonly containers: BoundContainer<any>[] = [];
+    targetting: Targetting = null;
 
     constructor(
         readonly app: Application,

@@ -68,15 +68,22 @@ export class CardRenderer extends BoundContainer<Card> {
 
         this.interactive = true;
         this.onclick = () => {
-            let targets = this.data.def.getPossibleTargets(this.game);
-            for (let target of targets) {
-                console.log(target, this.data.def.getCost(this.game, target));
+            // TODO: Refactor
+            if (this.context.targetting?.card === this.data) {
+                this.context.targetting = null;
+            } else {
+                this.context.targetting = {
+                    card: this.data,
+                    possibleTargets: this.data.def.getPossibleTargets(this.game)
+                };
             }
+            this.context.refresh();
         }
     }
 
     refreshBinding(card: Card): void {
         this.text.text = card.name;
+        this.back.tint = this.context.targetting?.card === card ? 0x00ff00 : 0xffffff;
     }
     
 }
