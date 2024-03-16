@@ -1,4 +1,4 @@
-import { PartialResourceSet } from "../../resources/Cost";
+import { PartialResourceSet } from "../../resources/ResourceSet";
 import { Farm, Woods } from "../Building";
 import { BuildingManager } from "./BuildingManager";
 import { DecksManager } from "./DecksManager";
@@ -6,6 +6,7 @@ import { ResourceManager } from "./ResourceManager";
 import { BaseSingleton } from "../Singleton";
 import { Card } from "../card/Card";
 import { Cards } from "../../card-defs/CardDef";
+import { Resource } from "../../resources/Resources";
 
 export class NewGameManager extends BaseSingleton {
     public startGame(): void {
@@ -38,14 +39,14 @@ export class NewGameManager extends BaseSingleton {
 
         startingBuildings.forEach(building => {
             buildingsManager.addBuilding(building);
-            console.log(building.resource);
             let starting = {
                 [building.resource]: building.getTotalStorageSpace()
             } as PartialResourceSet;
             resourceManager.resources.add(starting);
-            console.log("adding", starting, ':', resourceManager.resources);
+            // console.log("adding", starting, ':', resourceManager.resources);
             building.initialize();
         });
+        // console.log('food', resourceManager.resources.get(Resource.Food))
 
 
     }

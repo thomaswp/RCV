@@ -1,7 +1,7 @@
-import { Application, Graphics } from 'pixi.js';
+import { Application } from 'pixi.js';
 import { Game } from '../engine/game/Game';
-import { Buildings } from './Buildings';
-import { Hand } from './Hand';
+import { RenderContext } from './RenderContext';
+import { GameRenderer } from './GameRenderer';
 
 // Asynchronous IIFE
 export async function initUI() {
@@ -17,12 +17,13 @@ export async function initUI() {
     let game = new Game();
     game.initialize();
 
-    let buildings = new Buildings(game, app.screen.width, app.screen.height / 2);
-    app.stage.addChild(buildings.container);
-
-    let hand = new Hand(game, app.screen.width, app.screen.height / 2);
-    app.stage.addChild(hand.container);
-    hand.container.y = app.screen.height / 2;
+    let context = new RenderContext(app, game);
+    let renderer = new GameRenderer(context);
+    context.init();
+    context.refresh();
+    app.stage.addChild(renderer);
 
     game.start();
+
+    context.refresh();
 };

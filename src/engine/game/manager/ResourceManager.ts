@@ -1,4 +1,4 @@
-import { PartialResourceSet, ResourceSet } from "../../resources/Cost";
+import { PartialResourceSet, ResourceSet } from "../../resources/ResourceSet";
 import { BaseSingleton } from "../Singleton";
 
 export class ResourceManager extends BaseSingleton {

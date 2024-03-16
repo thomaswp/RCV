@@ -7,12 +7,15 @@ export type PartialResourceSet = {
 
 export class ResourceSet {
 
-    private Map: Map<Resource, number> = new Map();
+    private map: Map<number, number> = new Map();
 
     constructor(resources?: PartialResourceSet) {
         if (!resources) return;
         for (const key in resources) {
-            this.Map.set(Resource[key], resources[key]);
+            // keys are always strings, but we want to store the map
+            // as ints since that's what enums naturally map to
+            let keyInt = parseInt(key);
+            this.map.set(keyInt, resources[key]);
         }
     }
 
@@ -26,24 +29,25 @@ export class ResourceSet {
     }
 
     get(key: Resource): number {
-        return this.Map.get(key) || 0;
+        return this.map.get(key) || 0;
     }
 
     setResources() {
-        return this.Map.keys();
+        return this.map.keys();
     }
 
     add(cost: ResourceSetOrPartial): void {
         cost = toResourceSet(cost);
         for (const key of cost.setResources()) {
-            this.Map.set(key, this.get(key) + cost.get(key));
+            // console.log('adding', key, cost.get(key));
+            this.map.set(key, this.get(key) + cost.get(key));
         }
     }
 
     subtract(cost: ResourceSetOrPartial): void {
         cost = toResourceSet(cost);
         for (const key of cost.setResources()) {
-            this.Map.set(key, this.get(key) - cost.get(key));
+            this.map.set(key, this.get(key) - cost.get(key));
         }
     } 
 }

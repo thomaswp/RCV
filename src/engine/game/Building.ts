@@ -1,5 +1,5 @@
 import { CardDef } from "../card-defs/CardDef";
-import { PartialResourceSet } from "../resources/Cost";
+import { PartialResourceSet } from "../resources/ResourceSet";
 import { Resource } from "../resources/Resources";
 import { Event } from "../util/Event";
 import { Game } from "./Game";
@@ -19,8 +19,6 @@ export abstract class ProductionBuilding extends BaseGameObject {
     // protected resourceStored: number = 0;
 
     public readonly cardDef: CardDef;
-
-    public readonly Updated = new Event<void>();
 
     get name() {
         return this.cardDef.name;
@@ -120,8 +118,6 @@ export class Woods extends ProductionBuilding {
         });
 
         this.woodCount = this.getMaxAvailable();
-
-        this.Updated.emit();
     }
 
     getResourceAvailable(): number {

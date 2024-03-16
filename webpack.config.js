@@ -8,6 +8,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "static/js"),
     filename: "bundle.js", // <--- Will be compiled to this single file
+    library: "Game",
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
