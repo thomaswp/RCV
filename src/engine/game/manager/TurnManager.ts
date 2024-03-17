@@ -22,6 +22,6 @@ export class TurnManager extends BaseSingleton {
 
     public endTurn() {
         this.TurnEnded.emit(this._turn);
-
+        this.getSingleton(DecksManager).discardCardsForEndOfTurn();
     }
 }

@@ -30,6 +30,16 @@ export class HandRenderer extends BoundContainer<DecksManager> {
     layoutHand() {
         if (this.cards.length === 0) return;
 
+        const decksManager = this.getSingleton(DecksManager);
+        for (let i = 0; i < this.cards.length; i++) {
+            let card = this.cards[i];
+            if (decksManager.hand.indexOf(card.data) === -1) {
+                this.removeChild(card);
+                this.cards.splice(i, 1);
+                i--;
+            }
+        }
+
         let buildingWidth = this.cards[0].width;
 
         // center buildings on the screen, with equal space between
@@ -68,22 +78,13 @@ export class CardRenderer extends BoundContainer<Card> {
 
         this.interactive = true;
         this.onclick = () => {
-            // TODO: Refactor
-            if (this.context.targetting?.card === this.data) {
-                this.context.targetting = null;
-            } else {
-                this.context.targetting = {
-                    card: this.data,
-                    possibleTargets: this.data.def.getPossibleTargets(this.game)
-                };
-            }
-            this.context.refresh();
+            this.context.targetManager.onHandCardClicked(this.data);
         }
     }
 
     refreshBinding(card: Card): void {
         this.text.text = card.name;
-        this.back.tint = this.context.targetting?.card === card ? 0x00ff00 : 0xffffff;
+        this.back.tint = this.context.targetManager.targettingCard === card ? 0x00ff00 : 0xffffff;
     }
     
 }

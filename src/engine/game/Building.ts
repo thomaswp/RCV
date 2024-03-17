@@ -40,7 +40,13 @@ export abstract class ProductionBuilding extends BaseGameObject {
         }
     }
 
-    abstract work(): PartialResourceSet;
+    work() {
+        const resources = this.getSingleton(ResourceManager).resources;
+        let product = this.workAndReturnResources();
+        resources.add(product);
+    }
+
+    protected abstract workAndReturnResources(): PartialResourceSet;
     abstract getResourceAvailable(): number
     
     getTotalStorageSpace(): number {
@@ -70,6 +76,7 @@ export const SeasonFoodMultiplier = {
     [Season.Winter]: 0
 }
 
+// TODO: This really shouldn't be a production building
 export class House extends ProductionBuilding {
 
     resource = Resource.Worker;
@@ -78,7 +85,7 @@ export class House extends ProductionBuilding {
     initialize(): void {
         const resourceManager = this.getSingleton(ResourceManager);
         this.getSingleton(TurnManager).TurnStarted.on(_ => {
-            resourceManager.resources.set(Resource.Worker, this.expansionLevel);
+            resourceManager.resources.set(Resource.Worker, this.expansionLevel + 1);
         });
     }
 
@@ -90,7 +97,7 @@ export class House extends ProductionBuilding {
         return false;
     }
 
-    work(): PartialResourceSet {
+    workAndReturnResources(): PartialResourceSet {
         throw new Error("Cannot work House.");
     }
 }
@@ -108,7 +115,7 @@ export class Farm extends ProductionBuilding {
         return SeasonFoodMultiplier[this.season];
     }
 
-    work(): PartialResourceSet {
+    workAndReturnResources(): PartialResourceSet {
         let season = this.game.getSingleton(SeasonManager).season;
         return {
             [Resource.Food]: SeasonFoodMultiplier[season]
@@ -145,7 +152,7 @@ export class Woods extends ProductionBuilding {
         return this.woodCount;
     }
 
-    work(): PartialResourceSet {
+    workAndReturnResources(): PartialResourceSet {
         this.woodCount--;
         return {
             [Resource.Wood]: 1
@@ -159,6 +166,11 @@ export class Quarry extends ProductionBuilding {
     name = "Quarry";
 
     private stoneCount: number = 0;
+
+    canWork(): boolean {
+        // Can always work, either to replenish or to get stone
+        return true;
+    }
 
     getMaxAvailable(): number {
         return this.settings.quary.startingStone + 
@@ -183,14 +195,14 @@ export class Quarry extends ProductionBuilding {
         return super.getWorkCost();
     }
 
-    work(): PartialResourceSet {
+    workAndReturnResources(): PartialResourceSet {
         if (this.stoneCount == 0) {
             this.stoneCount = this.getMaxAvailable();
             return {};
         }
         this.stoneCount--;
         return {
-            [Resource.Wood]: 1
+            [Resource.Stone]: 1
         }
     }
 }

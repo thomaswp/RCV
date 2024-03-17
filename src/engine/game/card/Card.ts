@@ -1,4 +1,4 @@
-import { CardDef } from "../../components/CardAction";
+import { CardDef } from "../../components/CardDef";
 
 export class Card {
     def: CardDef<any>;

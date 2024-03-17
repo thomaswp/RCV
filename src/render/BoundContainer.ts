@@ -1,6 +1,7 @@
 import { Container } from "pixi.js";
 import { Game } from "../engine/game/Game";
 import { RenderContext } from "./RenderContext";
+import { Singleton } from "../engine/game/Singleton";
 
 export abstract class BoundContainer<T> extends Container {
 
@@ -22,6 +23,10 @@ export abstract class BoundContainer<T> extends Container {
         super();
         context.addContainer(this);
         this.init();
+    }
+
+    getSingleton<T extends Singleton>(type: new (...args: any[]) => T): T {
+        return this.game.getSingleton(type);
     }
 
     refresh(): void {

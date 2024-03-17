@@ -6,7 +6,7 @@ import { ResourceManager } from "./ResourceManager";
 import { BaseSingleton } from "../Singleton";
 import { Card } from "../card/Card";
 import { Resource } from "../../resources/Resources";
-import { Expand, Work } from "../../components/CardAction";
+import { Expand, Work } from "../../components/CardDef";
 
 export class NewGameManager extends BaseSingleton {
     public startGame(): void {

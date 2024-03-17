@@ -1,4 +1,5 @@
 import { GameSettings } from "./GameSettings";
+import { ActionManager } from "./manager/ActionManager";
 import { BuildingManager } from "./manager/BuildingManager";
 import { DecksManager } from "./manager/DecksManager";
 import { NewGameManager } from "./manager/NewGameManager";
@@ -23,6 +24,7 @@ export class Game {
         new GameSettings(this);
         new TurnManager(this);
         new BuildingManager(this);
+        new ActionManager(this);
 
         this.singletons.forEach(singleton => {
             singleton.initialize();

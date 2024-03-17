@@ -19,7 +19,8 @@ export class ResourceSet {
         }
     }
 
-    has(cost: ResourceSet): boolean {
+    has(cost: ResourceSetOrPartial): boolean {
+        cost = toResourceSet(cost);
         for (const key of cost.setResources()) {
             if (this.get(key) < cost.get(key)) {
                 return false;

@@ -99,4 +99,7 @@ export class Deck {
     map(callback) {
         return this.cards.map(callback);
     }
+    indexOf(card) {
+        return this.cards.indexOf(card);
+    }
 }

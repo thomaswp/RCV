@@ -1,12 +1,13 @@
 import { ProductionBuilding } from "../game/Building";
 import { Game } from "../game/Game";
 import { BuildingManager } from "../game/manager/BuildingManager";
+import { PartialResourceSet } from "../resources/ResourceSet";
 import { Resource } from "../resources/Resources";
 
 export interface CardDef<T> {
     name: string;
     getPossibleTargets(game: Game): T[];
-    getCost(game: Game, target: T): any;
+    getCost(game: Game, target: T): PartialResourceSet;
     do(game: Game, target: T): void;
 }
 

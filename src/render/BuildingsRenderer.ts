@@ -2,6 +2,7 @@ import { Graphics, Text } from "pixi.js";
 import { BuildingManager } from "../engine/game/manager/BuildingManager";
 import { ProductionBuilding } from "../engine/game/Building";
 import { BoundContainer } from "./BoundContainer";
+import { Targetability } from "./TargetManager";
 
 export class BuildingsRenderer extends BoundContainer<BuildingManager> {
 
@@ -62,14 +63,21 @@ export class BuildingRenderer extends BoundContainer<ProductionBuilding> {
         text.x = 10;
         text.y = 10;
         this.addChild(text);
+
+        this.interactive = true;
+        this.onclick = () => {
+            this.context.targetManager.onBuildingClicked(this.data);
+        }
     }
 
     refreshBinding(card: ProductionBuilding): void {
         this.text.text = card.describe();
         let tint = 0xffffff;
-        if (this.context.targetting != null) {
-            console.log(this.context.targetting);
-            if (!this.context.targetting.possibleTargets.includes(this.data)) {
+        if (this.context.targetManager.isSelectingTarget) {
+            let status = this.context.targetManager.getTargetability(this.data);
+            if (status == Targetability.InsufficientResources) {
+                tint = 0xff7777;
+            } else if (status == Targetability.NotApplicable){
                 tint = 0x777777;
             }
         }

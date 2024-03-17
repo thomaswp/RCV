@@ -37,4 +37,13 @@ export class DecksManager extends BaseSingleton {
             this.draw();
         }
     }
+
+    discardCard(card: Card) {
+        this.hand.removeCardByValue(card);
+        this.discard.addCardToEnd(card);
+    }
+
+    discardCardsForEndOfTurn() {
+        this.discard.addCardsToEnd(this.hand.drawAll());
+    }
 }
