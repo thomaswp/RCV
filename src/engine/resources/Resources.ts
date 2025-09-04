@@ -1,8 +1,8 @@
 export enum Resource {
-    Wood,
-    Stone,
-    Food,
-    Worker
+    Wood = 'Wood',
+    Stone = 'Stone',
+    Food = 'Food',
+    Worker = 'Worker'
 }
 
 // export interface Resource {

@@ -1,4 +1,4 @@
-import { PartialResourceSet } from "../resources/ResourceSet";
+import { PartialResourceSet, toResourceSet } from "../resources/ResourceSet";
 import { Resource } from "../resources/Resources";
 import { Event } from "../util/Event";
 import { Game } from "./Game";
@@ -22,9 +22,24 @@ export abstract class ProductionBuilding extends BaseGameObject {
     initialize(): void {
 
     }
+
+    isAnyStorageAvailable(): boolean {
+        const production = toResourceSet(this.peekReturnResources());
+        const storageAvailable = this.getSingleton(ResourceManager).getAvailableStorage();
+        // If at least one resource can be stored, we can work
+        for (const resource of Object.values(Resource)) {
+            const produced = production.get(resource);
+            if (produced == 0) continue;
+            if (produced <= storageAvailable.get(resource)) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     canWork(): boolean {
-        return this.getResourceAvailable() > 0;
+        if (this.getResourceAvailable() == 0) return false;
+        return this.isAnyStorageAvailable();
     }
 
     getWorkCost() {
@@ -47,6 +62,7 @@ export abstract class ProductionBuilding extends BaseGameObject {
     }
 
     protected abstract workAndReturnResources(): PartialResourceSet;
+    protected abstract peekReturnResources(): PartialResourceSet;
     abstract getResourceAvailable(): number
     
     getTotalStorageSpace(): number {
@@ -58,7 +74,7 @@ export abstract class ProductionBuilding extends BaseGameObject {
     }
 
     private get resourceStored() {
-        return this.game.getSingleton(ResourceManager).resources.get(this.resource);
+        return this.getSingleton(ResourceManager).resources.get(this.resource);
     }
 
     describe(): string {
@@ -97,6 +113,10 @@ export class House extends ProductionBuilding {
         return false;
     }
 
+    peekReturnResources(): PartialResourceSet {
+        return {};
+    }
+
     workAndReturnResources(): PartialResourceSet {
         throw new Error("Cannot work House.");
     }
@@ -115,11 +135,14 @@ export class Farm extends ProductionBuilding {
         return SeasonFoodMultiplier[this.season];
     }
 
-    workAndReturnResources(): PartialResourceSet {
-        let season = this.game.getSingleton(SeasonManager).season;
+    peekReturnResources(): PartialResourceSet {
         return {
-            [Resource.Food]: SeasonFoodMultiplier[season]
+            [Resource.Food]: SeasonFoodMultiplier[this.season]
         }
+    }
+
+    workAndReturnResources(): PartialResourceSet {
+        return this.peekReturnResources();
     }
 
     getTotalStorageSpace(): number {
@@ -152,11 +175,15 @@ export class Woods extends ProductionBuilding {
         return this.woodCount;
     }
 
-    workAndReturnResources(): PartialResourceSet {
-        this.woodCount--;
+    protected peekReturnResources(): PartialResourceSet {
         return {
             [Resource.Wood]: 1
         }
+    }
+
+    workAndReturnResources(): PartialResourceSet {
+        this.woodCount--;
+        return this.peekReturnResources();
     }
 }
 
@@ -168,8 +195,7 @@ export class Quarry extends ProductionBuilding {
     private stoneCount: number = 0;
 
     canWork(): boolean {
-        // Can always work, either to replenish or to get stone
-        return true;
+        return this.isAnyStorageAvailable();
     }
 
     getMaxAvailable(): number {
@@ -195,14 +221,21 @@ export class Quarry extends ProductionBuilding {
         return super.getWorkCost();
     }
 
+    peekReturnResources(): PartialResourceSet {
+        if (this.stoneCount == 0) {
+            return {};
+        }
+        return {
+            [Resource.Stone]: 1
+        }
+    }
+
     workAndReturnResources(): PartialResourceSet {
         if (this.stoneCount == 0) {
             this.stoneCount = this.getMaxAvailable();
             return {};
         }
         this.stoneCount--;
-        return {
-            [Resource.Stone]: 1
-        }
+        return this.peekReturnResources();
     }
 }

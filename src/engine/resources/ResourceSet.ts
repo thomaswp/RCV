@@ -7,15 +7,12 @@ export type PartialResourceSet = {
 
 export class ResourceSet {
 
-    private map: Map<number, number> = new Map();
+    private map: Map<Resource, number> = new Map();
 
     constructor(resources?: PartialResourceSet) {
         if (!resources) return;
-        for (const key in resources) {
-            // keys are always strings, but we want to store the map
-            // as ints since that's what enums naturally map to
-            let keyInt = parseInt(key);
-            this.map.set(keyInt, resources[key]);
+        for (const [key, value] of Object.entries(resources)) {
+            this.map.set(key as Resource, value);
         }
     }
 
@@ -49,15 +46,32 @@ export class ResourceSet {
         }
     }
 
+    plus(cost: ResourceSetOrPartial): ResourceSet {
+        const result = this.copy();
+        result.add(cost);
+        return result;
+    }
+
+    minus(cost: ResourceSetOrPartial): ResourceSet {
+        cost = toResourceSet(cost);
+        const result = this.copy();
+        result.subtract(cost);
+        return result;
+    }
+
     subtract(cost: ResourceSetOrPartial): void {
         cost = toResourceSet(cost);
         for (const key of cost.setResources()) {
             this.map.set(key, this.get(key) - cost.get(key));
         }
-    } 
+    }
+
+    copy(): ResourceSet {
+        return new ResourceSet(Object.fromEntries(this.map));
+    }
 }
 
-function toResourceSet(cost: ResourceSetOrPartial): ResourceSet {
+export function toResourceSet(cost: ResourceSetOrPartial): ResourceSet {
     if (cost instanceof ResourceSet) {
         return cost;
     }
